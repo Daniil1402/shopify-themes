@@ -93,21 +93,63 @@
           "cf3a2e12-4895-464b-adae-c6f6b39555b2": {
             "type": "slide",
             "settings": {
+              "display": "image",
               "image": "shopify:\/\/shop_images\/1920x1080.png",
-              "image_alt": "slide-1"
+              "image_alt": "slide-1",
+              "bg_color": "#000",
+              "caption_show": true,
+              "caption_position": "left",
+              "title": "Lorem ipsum dolor sit.",
+              "title_color": "#fff",
+              "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae minus quis corrupti, autem cupiditate amet expedita dignissimos accusamus delectus fuga rem veritatis modi deleniti sapiente voluptatibus error. Commodi, inventore libero?",
+              "text_color": "#fff",
+              "btn": "",
+              "btn_color": "#fff",
+              "btn_show": false
             }
           },
           "eda01a5c-d0f9-4793-92eb-b55cadf01900": {
             "type": "slide",
             "settings": {
+              "display": "video",
               "image": "shopify:\/\/shop_images\/1920x1080.png",
-              "image_alt": "image-alt"
+              "image_alt": "image-alt",
+              "video": "https:\/\/cdn.shopify.com\/s\/files\/1\/0502\/5664\/2231\/files\/video-placeholder.mp4",
+              "bg_color": "#000",
+              "caption_show": true,
+              "caption_position": "center",
+              "title": "Lorem ipsum dolor sit.",
+              "title_color": "#fff",
+              "text": "",
+              "text_color": "#fff",
+              "btn": "Button",
+              "btn_color": "#fff",
+              "btn_show": true
+            }
+          },
+          "1a6bbca9-76ea-440e-8fe3-2d83de389615": {
+            "type": "slide",
+            "settings": {
+              "display": "image",
+              "image": "shopify:\/\/shop_images\/1920x1080.png",
+              "image_alt": "image-alt",
+              "bg_color": "#000",
+              "caption_show": false,
+              "caption_position": "center",
+              "title": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+              "title_color": "#fff",
+              "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae minus quis corrupti, autem cupiditate amet expedita dignissimos accusamus delectus fuga rem veritatis modi deleniti sapiente voluptatibus error. Commodi, inventore libero?",
+              "text_color": "#fff",
+              "btn": "",
+              "btn_color": "#fff",
+              "btn_show": true
             }
           }
         },
         "block_order": [
           "cf3a2e12-4895-464b-adae-c6f6b39555b2",
-          "eda01a5c-d0f9-4793-92eb-b55cadf01900"
+          "eda01a5c-d0f9-4793-92eb-b55cadf01900",
+          "1a6bbca9-76ea-440e-8fe3-2d83de389615"
         ],
         "settings": {}
       }
