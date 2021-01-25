@@ -1,3 +1,4 @@
+<!-- blog-template -->
 <section class="blog">
     <div class="grid-container">
         <div class="grid-x">
@@ -17,6 +18,7 @@
         </div>
     </div>
 </section>
+<!-- blog-template //-->
 
 {% schema %}
 {
@@ -25,10 +27,7 @@
         {
             "type": "range",
             "id": "range",
-            "label": {
-                "en": "Articles per page",
-                "ru": "Статей на странице"
-            },
+            "label": "Articles per page",
             "min": 1,
             "max": 16,
             "step": 1,

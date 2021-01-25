@@ -1,73 +1,6 @@
 $(function() {
     window.theme = window.theme || {}
 
-    // header size
-    $(document).scroll(function() {
-        if ($(window).width() > 639) {
-            if ($(document).scrollTop() == 0) {
-                $(".header").removeClass("header-padding")
-            } else if ($(document).scrollTop() > 24) {
-                $(".header").addClass("header-padding")
-            }
-        }
-    });
-
-    // product-item
-    $("[data-product-item]").click(function() {
-        const $currentProduct = $($(this).parent(".button-group").siblings("a").find(".bottom"));
-        let isOpen = $currentProduct.hasClass("active-hover")
-        if(isOpen) {
-            $currentProduct.fadeOut(function() {
-                $currentProduct.removeClass("active-hover")
-            })
-        }
-        else {
-            $currentProduct.fadeIn(function() {
-                $currentProduct.addClass("active-hover")
-            })
-        }
-    })
-
-    // owl.carousel sliders
-    theme.indexTemplateSlider = '#index-template-slider'
-    theme.productTemplateSlider = '#product-template-slider'
-
-    //-- index-template
-    function indexTemplateSlider() {
-        const $indexTemplateSlider = $(theme.indexTemplateSlider).owlCarousel({
-            nav: false,
-            dots: false,
-            loop: false,
-            items: 1,
-            onInitialized
-        });
-        function onInitialized(event) {
-            const owlID = event.target.id;
-            console.log(`${owlID} has been initialized.`)
-        }
-    }
-
-    //-- product-template
-    function productTemplateSlider() {
-        $(theme.productTemplateSlider).owlCarousel({
-            nav: false,
-            dots: true,
-            loop: true,
-            items: 1,
-            onInitialized
-        });
-        function onInitialized(event) {
-            const owlID = event.target.id;
-            console.log(`${owlID} has been initialized.`)
-        }
-    }
-
-    //-- init sliders
-    (function initSliders(){
-        indexTemplateSlider()
-        productTemplateSlider()
-    }())
-
     //-- Events of sections and blocks
     $(document).on("shopify:section:load", function(event) {
         console.log("shopify:section:load triggered.")
@@ -117,4 +50,236 @@ $(function() {
     function shopifyBlockDeselect($this, event) {
         // console.log($this, event)
     }
+
+    //-- init utilities
+    function initUtilities(){
+        // Example:
+        // <button data-current-step='.current-step' data-prev-step='.prev-step' data-next-step='.next-step'></button>
+        $("[data-current-step]").click(function(e) {
+            e.preventDefault()
+        
+            const $currentStep = $(this).data("current-step")
+            const $prevStep = $(this).data("prev-step")
+            const $nextStep = $(this).data("next-step")
+        
+            $($currentStep).fadeOut();
+            if($prevStep) {
+                $($prevStep).fadeIn()
+            }
+            if($nextStep) {
+                $($nextStep).fadeIn()
+            }        
+        })
+    }
+
+    // owl.carousel sliders
+    theme.indexTemplateSlider = '#index-template-slider'
+    theme.productTemplateSlider = '#product-template-slider'
+    //-- index-template
+    function indexTemplateSlider() {
+        const $indexTemplateSlider = $(theme.indexTemplateSlider).owlCarousel({
+            nav: false,
+            dots: false,
+            loop: false,
+            items: 1,
+            onInitialized
+        });
+        function onInitialized(event) {
+            const owlID = event.target.id;
+            console.log(`${owlID} has been initialized.`)
+        }
+    }
+    //-- product-template
+    function productTemplateSlider() {
+        $(theme.productTemplateSlider).owlCarousel({
+            nav: false,
+            dots: true,
+            loop: true,
+            items: 1,
+            onInitialized
+        });
+        function onInitialized(event) {
+            const owlID = event.target.id;
+            console.log(`${owlID} has been initialized.`)
+        }
+    }
+    //-- Sliders
+    function initSliders(){
+        indexTemplateSlider()
+        productTemplateSlider()
+    }
+
+    //-- Cart
+    function initCart() {
+        $('.add-to-cart').submit(function(e){
+            e.preventDefault()
+            const formData = {
+                'items': [{
+                    'id': $(this).children("select[name='id']").val(),
+                    'quantity': $(this).children("input[name='quantity']").val()
+                }]
+            };
+            addToCart(formData)
+        })
+        $(".update-cart").click(function(e) {
+            e.preventDefault()
+            updateCart($(this))
+        })
+        async function addToCart(formData) {
+            await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                console.log("Successed!")
+                openCartAjax()
+                nativeToast({
+                    message: 'Added!',
+                    timeout: 5000,
+                    rounded: true,
+                    position: 'south',
+                    closeOnClick: true,
+                    type: 'success'
+                })
+                return response.json();
+            })
+            .catch((e) => {
+                console.log("Add to cart failed", e)
+                const error = JSON.parse(e.responseText)
+                if (error.status == 422){
+                    nativeToast({
+                        message: 'Out Of Stock!',
+                        timeout: 5000,
+                        rounded: true,
+                        position: 'south',
+                        closeOnClick: true,
+                        type: 'error'
+                    })
+                }
+            });
+        }
+        async function updateCart($item) {
+            await fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ quantity: $item.val(), id: $item.data("item-key") })
+            })
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if($item.val() > 0) {
+                    const item_quantity = data.items.filter(i=>i.key == $item.data("item-key"))[0].quantity
+                    if ($item.val() != item_quantity) {
+                        nativeToast({
+                            message: 'Out Of Stock!',
+                            timeout: 5000,
+                            rounded: true,
+                            position: 'south',
+                            closeOnClick: true,
+                            type: 'error'
+                        })
+                        $(`[data-item-key="${key}"]`).val(item_quantity)
+                    } else {
+                        nativeToast({
+                        message: 'Quantity changed!',
+                        timeout: 5000,
+                        rounded: true,
+                        position: 'south',
+                        closeOnClick: true,
+                        type: 'success'
+                        })
+                        openCartAjax()
+                    }
+                } else {
+                    nativeToast({
+                    message: 'Deleted!',
+                    timeout: 5000,
+                    rounded: true,
+                    position: 'south',
+                    closeOnClick: true,
+                    type: 'success'
+                    })
+                    openCartAjax()
+                }
+            })
+            .catch((e) => {
+                console.log("Update cart error", e)
+                const error = JSON.parse(e.responseText)
+                if (error.status == 422){
+                    nativeToast({
+                        message: 'Out Of Stock!',
+                        timeout: 5000,
+                        rounded: true,
+                        position: 'south',
+                        closeOnClick: true,
+                        type: 'error'
+                    })
+                } else {
+                    nativeToast({
+                        message: 'Update cart error!',
+                        timeout: 5000,
+                        rounded: true,
+                        position: 'south',
+                        closeOnClick: true,
+                        type: 'error'
+                    })
+                }
+            });
+        }
+        async function openCartAjax() {
+            $('.cart-ajax').addClass('active').fadeIn(100)
+            $('.cart-ajax .content-loader').html(`<div class="ring-loader"><div></div><div></div><div></div><div></div></div>`)
+            $('.cart-ajax .content-loader').load('/cart?view=ajax', function(){
+                let cartJson = JSON.parse($('.content-loader').find('#cartJSON').text())
+                $('.cart-item-count').text(cartJson.item_count)
+                // commands here
+            })
+        }
+    }
+
+    //-- Recommendations on product page
+    function initProductRecommendations() {
+        const $container = $(".product-recommendations");
+        const baseUrl = $container.data("baseUrl");
+        const productId = $container.data("productId");
+        const limit = $container.data("limit");
+        const productRecommendationsUrlAndContainerClass = baseUrl + "?section_id=product-recommendations&limit=" + limit + "&product_id=" + productId + " .product-recommendations";
+        $container.parent().load(productRecommendationsUrlAndContainerClass, function () {
+            // commands here
+        });
+        return initProductRecommendations;
+    }
+
+    //-- init functionality
+    (function(){
+        initProductRecommendations()
+        initCart()
+        initSliders()
+        initUtilities()
+    }())
 })
+
+$(window).on("load", function () {
+	$(".preloader").fadeOut("slow");
+
+	// Scroll to product on collections pages
+	// if (window.location.pathname.includes("collections") && !window.location.pathname.includes("products")) {
+	// 	const productID = localStorage.getItem("productID")
+	// 	if (productID) {
+	// 		console.log("Product ID from local storage -", productID)
+	// 		if (productID.length > 0) {
+	// 			const productAnchor = "#" + productID
+	// 			if ($(".boost-pfs-filter-products").find(productAnchor).length > 0) {
+	// 				console.log(`Product with anchor ${productAnchor} finded`, $(".boost-pfs-filter-products").find(productAnchor))
+	// 				const scrollTo = $(productAnchor).offset().top - 30
+	// 				$("body,html").animate({ scrollTop: scrollTo}, 1500)
+	// 			}
+	// 		}
+	// 	}
+	// }
+	// Scroll to product on collections pages //
+});

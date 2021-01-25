@@ -36,32 +36,6 @@
           "mail_email": "test@test.test"
         }
       },
-      "1603374055827fcba9": {
-        "type": "index-products",
-        "settings": {
-          "collection": "collection",
-          "range": 6
-        }
-      },
-      "1603378886cbc2c810": {
-        "type": "index-blog",
-        "settings": {
-          "blog": "blog",
-          "range": 6
-        }
-      },
-      "1603381326f1dbd2fe": {
-        "type": "index-bigimage",
-        "settings": {
-          "image": "shopify:\/\/shop_images\/1920x1080.png"
-        }
-      },
-      "16033813428ee55afa": {
-        "type": "index-bigimage",
-        "settings": {
-          "image": "shopify:\/\/shop_images\/1920x1080.png"
-        }
-      },
       "blog-template": {
         "type": "blog-template",
         "settings": {
@@ -80,44 +54,36 @@
         "type": "article-template",
         "settings": {}
       },
-      "list-collection-template": {
-        "type": "list-collection-template",
-        "settings": {
-          "title": "Коллекции",
-          "range": 6
-        }
-      },
-      "161079528444721c9e": {
+      "16115666762c6e495d": {
         "type": "index-hero",
         "blocks": {
-          "cf3a2e12-4895-464b-adae-c6f6b39555b2": {
+          "b6ae0b0f-c080-4b2e-8b5e-9d6a3ce87a78": {
             "type": "slide",
             "settings": {
+              "display": "image",
               "image": "shopify:\/\/shop_images\/1920x1080.png",
-              "image_alt": "slide-1"
-            }
-          },
-          "eda01a5c-d0f9-4793-92eb-b55cadf01900": {
-            "type": "slide",
-            "settings": {
-              "image": "shopify:\/\/shop_images\/1920x1080.png",
-              "image_alt": "image-alt"
+              "image_alt": "image-alt",
+              "bg_color": "#000",
+              "caption_show": true,
+              "caption_position": "center",
+              "title": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+              "title_color": "#fff",
+              "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae minus quis corrupti, autem cupiditate amet expedita dignissimos accusamus delectus fuga rem veritatis modi deleniti sapiente voluptatibus error. Commodi, inventore libero?",
+              "text_color": "#fff",
+              "btn": "",
+              "btn_color": "#fff",
+              "btn_show": true
             }
           }
         },
         "block_order": [
-          "cf3a2e12-4895-464b-adae-c6f6b39555b2",
-          "eda01a5c-d0f9-4793-92eb-b55cadf01900"
+          "b6ae0b0f-c080-4b2e-8b5e-9d6a3ce87a78"
         ],
         "settings": {}
       }
     },
     "content_for_index": [
-      "161079528444721c9e",
-      "1603374055827fcba9",
-      "1603381326f1dbd2fe",
-      "1603378886cbc2c810",
-      "16033813428ee55afa"
+      "16115666762c6e495d"
     ]
   },
   "presets": {
