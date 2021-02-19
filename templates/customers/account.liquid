@@ -1,21 +1,18 @@
-<section class="customer_page">
+<section class="customer">
     {% if customer %}
         <div class="grid-container fluid">
-            <div class="grid-x align-right">
-                <a href="/account" class="link">
-                    {{ customer.first_name }} ({{ customer.email }})
-                </a>
-            </div>
-            <div class="grid-x align-justify" style="margin-bottom: 20px;">
-                <h2 class="title" style="margin: 0;">Account</h2>
-                <nav class="nav">
-                    <a href="/account/addresses">Addresess</a>
-                    <a class="link" href="/account/logout">Logout</a>
+            <div class="grid-x align-justify align-middle">
+                <h1 class="heading">
+                    Account ({{ customer.first_name }})
+                </h1>
+                <nav>
+                    <a href="/account/addresses" class="info-link">Addresess</a>
+                    <a href="/account/logout" class="info-link">Logout</a>
                 </nav>
             </div>
-            <div class="grid-x">
-                <h3 class="title sub">Orders</h3>
-            </div>
+
+            <h2 class="subheading">Orders</h2>
+
             <div class="grid-x" style="overflow-x: auto;">
                 {% paginate customer.orders by 10 %}
                     <div class="cell" style="min-width: 500px;">
@@ -67,12 +64,13 @@
                         </div> 
                     {% endif %}
                 {% endpaginate %}
-            </div>      
+            </div>
         </div>
     {% else %}
-        <a class="link" href="/account/login" style="display: flex; justify-content: center;">Login page</a>
         <script>
-            window.location = "/account/login";
+            if (!Shopify.desginMode) {
+                window.location = "/account/login";
+            }
         </script>
-    {% endif %}    
+    {% endif %}
 </section>

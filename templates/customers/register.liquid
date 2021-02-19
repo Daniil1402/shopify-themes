@@ -1,34 +1,30 @@
-<section class="customer_page">
-    {% if customer %}
-        <a class="link" href="/account" style="display: flex; justify-content: center;">Your account</a>
-        <script>
-            window.location = "/account";
-        </script>
-    {% else %}
+<section class="customer">
+    {% unless customer %}
         <div class="grid-container">
-            {% form 'create_customer' %}
+            {% form 'create_customer', class: "form-register" %}
                 {{ form.errors | default_errors }}
 
-                <h2 class="title">Register</h2>
+                <h1 class="form-title">
+                    Register
+                </h1>
 
-                <div class="grid-x">
-                    <input class="cell" type="text" placeholder="First Name" value="" name="customer[first_name]" id="first_name" size="30" required/>
-                    <input class="cell" type="text" placeholder="Last Name" value="" name="customer[last_name]" id="last_name" size="30" required/>
-                    <input class="cell" type="email" placeholder="Email Address" value="" name="customer[email]" id="email" size="30" required/>
-                    <input class="cell" type="password" placeholder="Password" value="" name="customer[password]" id="password" size="30" required/>
-                </div>
-                
-                <div class="grid-x">
-                    <div class="cell medium-auto">
-                        <span class="text">
-                            Already have an account? <a class="link" href="/account/login">LOGIN</a>
-                        </span>
-                    </div>
-                    <div class="cell medium-4">
-                        <button class="btn btn-primary" type="submit">Register</button>
-                    </div>
-                </div> 
+                <input class="cell" type="text" placeholder="John" value="" name="customer[first_name]" id="first_name" minlength="1" size="30" required/>
+                <input class="cell" type="text" placeholder="Doe" value="" name="customer[last_name]" id="last_name" minlength="1" size="30" required/>
+                <input class="cell" type="email" placeholder="your-email@example.example" value="" name="customer[email]" id="email" minlength="4" size="30" required/>
+                <input class="cell" type="password" placeholder="your-password" value="" name="customer[password]" id="password" minlength="4" size="30" required/>
+            
+                <button class="btn btn-login" type="submit">Register</button>
+
+                <span class="info-text">
+                    Already have an account? <a class="info-link" href="/account/login">LOGIN</a>
+                </span>
             {% endform %}
-        </div>    
-    {% endif %}
+        </div>
+    {% else %}
+        <script>
+            if (!Shopify.desginMode) {
+                window.location = "/account";
+            }
+        </script>
+    {% endunless %}
 </section>

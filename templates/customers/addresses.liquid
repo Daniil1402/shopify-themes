@@ -1,4 +1,31 @@
-<section class="customer_page">
+<section class="customer">
+    {% if customer %}
+    <div class="grid-container fluid">
+        <div class="grid-x align-justify align-middle">
+            <h1 class="heading">
+                Account ({{ customer.first_name }})
+            </h1>
+            <nav>
+                <a href="/account" class="info-link">Orders</a>
+                <a href="/account/logout" class="info-link">Logout</a>
+            </nav>
+        </div>
+
+        <h2 class="subheading">Addresses</h2>
+
+        
+
+    </div>
+    {% else %}
+        <script>
+            if (!Shopify.desginMode) {
+                window.location = "/account/login";
+            }
+        </script>
+    {% endif %}
+</section>
+
+<section class="customer_page hide">
     {% if customer %}
         <div class="grid-container fluid">
             <div class="grid-x align-right">
