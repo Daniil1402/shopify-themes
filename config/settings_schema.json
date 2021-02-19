@@ -6,5 +6,62 @@
     "theme_author": "Yuriy K. @eng1n3x",
     "theme_documentation_url": "https:\/\/github.com\/ENG1N3X\/shopify-themes",
     "theme_support_url": "https:\/\/github.com\/ENG1N3X\/shopify-themes"
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "id": "favicon",
+        "type": "image_picker",
+        "label": "Favicon"
+      }
+    ]
+  },
+  {
+    "name": "Social Links",
+    "settings": [
+      {
+        "type": "url",
+        "id": "instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "twitter",
+        "label": "Twitter"
+      },
+      {
+        "type": "url",
+        "id": "facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "vimeo",
+        "label": "Vimeo"
+      },
+      {
+        "type": "url",
+        "id": "youtube",
+        "label": "Youtube"
+      }
+    ]
+  },
+  {
+    "name": "Product page - shipping info",
+    "settings": [
+      {
+        "type": "textarea",
+        "id": "shipping-1",
+        "label": "Shipping #1",
+        "default": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis, consectetur repellat ab ipsam, voluptates aspernatur atque maxime error ea nemo exercitationem perspiciatis temporibus non nam labore iure in reiciendis voluptatum."
+      },
+      {
+        "type": "textarea",
+        "id": "shipping-2",
+        "label": "Shipping #2",
+        "default": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis, consectetur repellat ab ipsam, voluptates aspernatur atque maxime error ea nemo exercitationem perspiciatis temporibus non nam labore iure in reiciendis voluptatum."
+      }
+    ]
   }
 ]

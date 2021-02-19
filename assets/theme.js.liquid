@@ -1,120 +1,314 @@
-$(function() {
-    window.theme = window.theme || {}
+window.theme = window.theme || {}
 
-    // header size
-    $(document).scroll(function() {
-        if ($(window).width() > 639) {
-            if ($(document).scrollTop() == 0) {
-                $(".header").removeClass("header-padding")
-            } else if ($(document).scrollTop() > 24) {
-                $(".header").addClass("header-padding")
-            }
-        }
-    });
+theme.utils = (function () {
+	const showToast = (message, type) => {
+		nativeToast({
+			message,
+			timeout: 5000,
+			rounded: true,
+			position: "south",
+			closeOnClick: true,
+			type: typeof type !== "undefined" ? type : "success",
+		})
+	}
 
-    // product-item
-    $("[data-product-item]").click(function() {
-        const $currentProduct = $($(this).parent(".button-group").siblings("a").find(".bottom"));
-        let isOpen = $currentProduct.hasClass("active-hover")
-        if(isOpen) {
-            $currentProduct.fadeOut(function() {
-                $currentProduct.removeClass("active-hover")
-            })
-        }
-        else {
-            $currentProduct.fadeIn(function() {
-                $currentProduct.addClass("active-hover")
-            })
-        }
-    })
+	const init = () => {
+		// <button data-current-step='.current-step' data-prev-step='.prev-step' data-next-step='.next-step'></button>
+		$("[data-current-step]").click(function (e) {
+			e.preventDefault()
 
-    // owl.carousel sliders
-    theme.indexTemplateSlider = '#index-template-slider'
-    theme.productTemplateSlider = '#product-template-slider'
+			const $currentStep = $(this).data("current-step")
+			const $prevStep = $(this).data("prev-step")
+			const $nextStep = $(this).data("next-step")
 
-    //-- index-template
-    function indexTemplateSlider() {
-        const $indexTemplateSlider = $(theme.indexTemplateSlider).owlCarousel({
-            nav: false,
-            dots: false,
-            loop: false,
-            items: 1,
-            onInitialized
-        });
-        function onInitialized(event) {
-            const owlID = event.target.id;
-            console.log(`${owlID} has been initialized.`)
-        }
-    }
+			$($currentStep).fadeOut()
+			if ($prevStep) {
+				$($prevStep).fadeIn()
+			}
+			if ($nextStep) {
+				$($nextStep).fadeIn()
+			}
+		})
 
-    //-- product-template
-    function productTemplateSlider() {
-        $(theme.productTemplateSlider).owlCarousel({
-            nav: false,
-            dots: true,
-            loop: true,
-            items: 1,
-            onInitialized
-        });
-        function onInitialized(event) {
-            const owlID = event.target.id;
-            console.log(`${owlID} has been initialized.`)
-        }
-    }
+		$("[data-tab-show]").click(function (e) {
+			e.preventDefault()
 
-    //-- init sliders
-    (function initSliders(){
-        indexTemplateSlider()
-        productTemplateSlider()
-    }())
+			$("[data-tab-show]").removeClass("active")
+			$(this).addClass("active")
 
-    //-- Events of sections and blocks
-    $(document).on("shopify:section:load", function(event) {
-        console.log("shopify:section:load triggered.")
-        shopifySectionLoad($(this), event)
-    }).on("shopify:section:unload", function(event) {
-        console.log("shopify:section:unload triggered.")
-        // shopifySectionUnload($(this), event)
-    }).on("shopify:section:select", function(event) {
-        console.log("shopify:section:select triggered.")
-        // shopifySectionSelect($(this), event)
-    }).on("shopify:section:deselect", function(event) {
-        console.log("shopify:section:deselect triggered.")
-        // shopifySectionDeselect($(this), event)
-    }).on("shopify:section:reorder", function(event) {
-        console.log("shopify:section:reorder triggered.")
-        // shopifySectionReorder($(this), event)
-    }).on("shopify:block:select", function(event) {
-        console.log("shopify:block:select triggered.")
-        // shopifyBlockSelect($(this), event)
-    }).on("shopify:block:deselect", function(event) {
-        console.log("shopify:block:deselect triggered.")
-        // shopifyBlockDeselect($(this), event)
-    })
+			const $toShow = $($(this).data("tab-show"))
 
-    function shopifySectionLoad($this, event) {
-        // console.log($this, event)
-        if($(event.target).hasClass('index-hero-section-shopify-event')) {
-            $(theme.indexTemplateSlider).trigger('destroy.owl.carousel');
-            indexTemplateSlider()
-        }
-    }
-    function shopifySectionUnload($this, event) {
-        // console.log($this, event)
-    }
-    function shopifySectionSelect($this, event) {
-        // console.log($this, event)
-    }
-    function shopifySectionDeselect($this, event) {
-        // console.log($this, event)
-    }
-    function shopifySectionReorder($this, event) {
-        // console.log($this, event)
-    }
-    function shopifyBlockSelect($this, event) {
-        // console.log($this, event)
-    }
-    function shopifyBlockDeselect($this, event) {
-        // console.log($this, event)
-    }
+			$(".tabs .content").hide()
+
+			$toShow.show(function () {
+				console.log(`Tab ${$toShow} has been opened.`)
+			})
+		})
+
+		// Scroll to product on collections pages
+		// if (!window.location.pathname.includes("collections") && !window.location.pathname.includes("products")) {
+		// 	const productID = localStorage.getItem("productID")
+		// 	if (productID) {
+		// 		console.log(`Removed ${productID} from local storage!`)
+		// 		localStorage.removeItem("productID")
+		// 	}
+		// }
+
+		// $(".product-item").click(function () {
+		// 	console.log(`Added ${$(this).parent().attr("id")} to local storage!`)
+		// 	localStorage.setItem("productID", $(this).parent().attr("id"))
+		// })
+		// Scroll to product on collections pages //
+	}
+	return { init, showToast }
+})()
+
+theme.cart = (function () {
+	const updateCart = async ($item) => {
+		try {
+			let response = await fetch("/cart/change.js", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ quantity: $item.data("item-quantity"), id: $item.data("item-key") }),
+			})
+			let data = await response.json()
+			if ($item.val() > 0) {
+				const item_quantity = data.items.filter((i) => i.key == $item.data("item-key"))[0].quantity
+				if ($item.val() != item_quantity) {
+					theme.utils.showToast("Out Of Stock!", "error")
+					$(`[data-item-key="${key}"]`).val(item_quantity)
+				} else {
+					theme.utils.showToast("Quantity changed!")
+					openCart()
+				}
+			} else {
+				theme.utils.showToast("Deleted!")
+				openCart()
+			}
+		} catch (e) {
+			console.log("Update cart error", e)
+			const error = JSON.parse(e.responseText)
+			if (error.status == 422) {
+				theme.utils.showToast("Out Of Stock!", "error")
+			} else {
+				theme.utils.showToast("Update cart error!", "error")
+			}
+		}
+	}
+	const addToCart = async (formData) => {
+		try {
+			const response = await fetch("/cart/add.js", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(formData),
+			})
+			if (!response.ok) {
+				throw response
+			}
+			console.log("Successed!")
+			theme.utils.showToast("Added!")
+			openCart()
+			return await response.json()
+		} catch (e) {
+			console.error("Add to cart failed", e)
+			if (e.status == 422) {
+				theme.utils.showToast("Out Of Stock!", "error")
+			} else {
+				theme.utils.showToast("Add to cart failed!", "error")
+			}
+		}
+	}
+	const openCart = function () {
+		$(".cart").addClass("active")
+		$(".cart .content-loader").empty().append(`<div class="ring-loader"><div></div><div></div><div></div><div></div></div>`)
+		$(".cart .content-loader").load("/cart?view=ajax", function () {
+			// let cartJson = JSON.parse($(".content-loader").find("#cartJSON").text())
+			// $(".cart-item-count").text(cartJson.item_count)
+			// commands here
+			$("[data-remove-item-cart]").click(function (e) {
+				e.preventDefault()
+				updateCart($(this))
+			})
+		})
+	}
+	const init = function () {
+		$(".product-variant input").change(function (e) {
+			e.preventDefault()
+			const $money = $(this).parents(".product-content").find(".current")
+			$money.text($(this).data("variant-price"))
+		})
+		$("[data-add-to-cart]").click(function (e) {
+			e.preventDefault()
+			const formData = {
+				items: [
+					{
+						id: $(this).parents(".product-info").find("input:checked").val(),
+						quantity: $(this).parents(".product-info").find("input[name='quantity']").val(),
+					},
+				],
+			}
+			addToCart(formData)
+		})
+		$("[data-toggle-cart]").click(function (e) {
+			e.preventDefault()
+			let isActive = $(".cart").hasClass("active")
+			if (isActive) {
+				$(".cart").removeClass("active")
+			} else {
+				openCart()
+			}
+			isActive = !isActive
+		})
+	}
+	return {
+		init,
+		addToCart,
+	}
+})()
+
+theme.carouseles = (function () {
+	const activeCarouseles = [
+			{
+				selector: "#slider",
+				getSettings: function () {Í
+					return {
+						nav: $(this.selector).data("nav"),
+						dots: $(this.selector).data("dots"),
+						loop: $(this.selector).data("loop"),
+						items: $(this.selector).data("items"),
+						navText: ["<div></div>", "<div></div>"],
+						margin: 50,
+						responsiveClass: true,
+						responsive: {
+							1023: {
+								items: $(this.selector).data("items"),
+							},
+							639: {
+								items: 2,
+								margin: 20,
+							},
+							300: {
+								items: 1,
+							},
+						},
+						onInitialized: function (event) {
+							const owlID = event.target.id
+							console.log(`${owlID} has been initialized.`)
+						},
+					}
+				},
+			},
+		],
+		initializeCarousel = (carousel) => ($(carousel.selector).length > 0 ? $(carousel.selector).owlCarousel(carousel.getSettings()) : false)
+	reInitializeCarousel = (selector) => {
+		$(selector).trigger("destroy.owl.carousel")
+		initializeCarousel(activeCarouseles.filter((carousel) => carousel.selector == selector)[0])
+	}
+	// Initializing
+	const init = function () {
+		activeCarouseles.forEach(initializeCarousel)
+	}
+	return {
+		init,
+		reInitializeCarousel,
+	}
+})()
+
+//-- Recommendations on product page
+theme.loadProductRecomendations = (async function () {
+	const $container = $(".recommendations")
+	if ($container.length > 0) {
+		const baseUrl = $container.data("base-url")
+		const productId = $container.data("product-id")
+		const sectionId = $container.data("section-id")
+		const limit = $container.data("limit")
+		const requestURL = `${baseUrl}?section_id=${sectionId}&limit=${limit}&product_id=${productId}`
+
+		const $mainContainer = $container.parent()
+		$mainContainer.html(`<div class="loader"></div>`)
+
+		try {
+			let response = await fetch(requestURL, { method: "GET" })
+			if (!response.ok) {
+				throw new Error("Failed to load product recommendations.")
+			}
+			response = await response.text()
+			$mainContainer.html(response)
+			console.log("Recommended products loaded.")
+		} catch (e) {
+			console.error(e.message)
+			$mainContainer.hide()
+		}
+	}
+})()
+
+//-- Reload components in customizer
+theme.customizer = (function () {
+	if (Shopify.designMode) {
+		document.addEventListener("shopify:section:load", function (event) {
+			console.log("shopify:section:load triggered.")
+			if ($(event.target).hasClass("section-class")) {
+				theme.carouseles.reInitializeCarousel("#slider")
+			}
+
+			if (event.detail.sectionId === "product-recommendations") {
+				theme.loadProductRecomendations()
+			}
+		})
+		document.addEventListener("shopify:section:unload", function (event) {
+			console.log("shopify:section:unload triggered.")
+		})
+		document.addEventListener("shopify:section:select", function (event) {
+			console.log("shopify:section:select triggered.")
+		})
+		document.addEventListener("shopify:section:deselect", function (event) {
+			console.log("shopify:section:deselect triggered.")
+		})
+		document.addEventListener("shopify:section:reorder", function (event) {
+			console.log("shopify:section:reorder triggered.")
+		})
+		document.addEventListener("shopify:block:select", function (event) {
+			console.log("shopify:block:select triggered.")
+		})
+		document.addEventListener("shopify:block:deselect", function (event) {
+			console.log("shopify:block:deselect triggered.")
+		})
+	}
+})()
+
+//-- Init
+theme.init = function () {
+	theme.utils.init()
+	theme.cart.init()
+	theme.carouseles.init()
+}
+
+//-- Main init function
+$(function () {
+	theme.init()
+})
+
+$(window).on("load", function () {
+	$("#page-preloader").fadeOut("slow")
+
+	// Scroll to product on collections pages
+	// if (window.location.pathname.includes("collections") && !window.location.pathname.includes("products")) {
+	// 	const productID = localStorage.getItem("productID")
+	// 	if (productID) {
+	// 		console.log("Product ID from local storage -", productID)
+	// 		if (productID.length > 0) {
+	// 			const productAnchor = "#" + productID
+	// 			if ($(".boost-pfs-filter-products").find(productAnchor).length > 0) {
+	// 				console.log(`Product with anchor ${productAnchor} finded`, $(".boost-pfs-filter-products").find(productAnchor))
+	// 				const scrollTo = $(productAnchor).offset().top - 30
+	// 				$("body,html").animate({ scrollTop: scrollTo}, 1500)
+	// 			}
+	// 		}
+	// 	}
+	// }
+	// Scroll to product on collections pages //
 })

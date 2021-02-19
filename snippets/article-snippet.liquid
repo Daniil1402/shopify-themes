@@ -1,0 +1,7 @@
+<article class="{{ classes }} article-item">
+    <img src="{{ article.image.src | img_url: 'master' }}" alt="{{ article.image.alt }}">
+    <span class="">{{ article.published_at | time_tag: format: 'date_at_time' }}</span>
+    <h4 class="">{{ article.title }}</h4>
+    <p class="">{{ article.content }}</p>
+    <a href="{{ article.url }}" class="">Больше</a>
+</article>

@@ -14,16 +14,16 @@
                     <div class="cell grid-x align-justify align-middle margin-bottom-2 margin-top-2">
                       <h2 class="main-title margin-0">{{ product.title }}</h2>
                       <!-- smart wishlist -->
-                        <div id="smartwishlist" class="product-template-wishlist" 
-                          data-product="{{ product.id }}" 
-                          data-variant="{{ product.variants.first.id }}">
+                      <div id="smartwishlist" class="product-template-wishlist" 
+                        data-product="{{ product.id }}" 
+                        data-variant="{{ product.variants.first.id }}">
                       </div>
                       <!-- smart wishlist //-->
                     </div>
 
                     {% assign current_variant = product.selected_or_first_available_variant %}
 
-                    {% form "product", product, class: "grid-x add-to-cart" %}
+                    {% form "product", product, class: "grid-x add-to-cart hide" %}
 
                       <select name="id" class="cell">
                         {% for variant in product.variants %}
@@ -58,3 +58,10 @@
     </div>
 </section>
 <!-- product-template // -->
+
+{% schema %}
+{
+    "name": "Product",
+    "settings": []
+}
+{% endschema %}

@@ -1,30 +1,29 @@
-<!-- search-template -->
-<section class="search_page">
-    <div class="grid-container fluid">
-        <h3 class="title">Search</h3>
+<section class="search">
+    {% paginate search.results by 1 %}
+        <form action="/search" method="get" role="search">
+            <input type="search" name="q" value="{{ search.terms | escape }}">
+            <button type="submit">search</button>
+        </form>
 
-        {% paginate search.results by 1 %}
-            <form action="/search" method="get" role="search">
-                <input type="search" name="q" value="{{ search.terms | escape }}">
-                <button type="submit">search</button>
-            </form>
+        {% if search.performed %}
+            {% for item in search.results %}
+                {% render "product-snippet", product: item, classes: "CLASSES" %}
+            {% else %}
+                <p class="">No results</p>
+            {% endfor %}
+        {% endif %}
 
-            <div class="grid-x">
-                {% if search.performed %}
-                    {% for item in search.results %}
-                        {% render "product-item", product: item, classes: "cell medium-4 large-3" %}
-                    {% else %}
-                        <p class="default-text">No results</p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
-            <div class="pagination">
-                {% if paginate.pages > 1 %}
-                    {{ paginate | default_pagination }}
-                {% endif %}
-            </div>
-        {% endpaginate %}
-    </div>
+        <div class="">
+            {% if paginate.pages > 1 %}
+                {{ paginate | default_pagination }}
+            {% endif %}
+        </div>
+    {% endpaginate %}
 </section>
-<!-- search-template // -->
+
+{% schema %}
+{
+    "name": "Search",
+    "settings": []
+}
+{% endschema %}
